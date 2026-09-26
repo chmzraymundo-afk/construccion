@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Integral - Ingeniería Civil</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-light: #3b82f6;
+            --accent: #f59e0b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --border-color: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-top: 5px;
+        }
+
+        /* Sistema de Pestañas (Tabs) */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #475569;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Formularios y Controles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .input-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1e293b;
+        }
+
+        input {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--primary-light);
+        }
+
+        .btn-calc {
+            background-color: var(--primary-light);
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-calc:hover {
+            background-color: var(--primary);
+        }
+
+        /* Tarjetas de Resultados */
+        .results-card {
+            margin-top: 25px;
+            background: #f1f5f9;
+            border-left: 5px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .results-card h3 {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .results-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .results-list li {
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #cbd5e1;
+            padding-bottom: 6px;
+        }
+
+        .results-list li span.val {
+            font-weight: bold;
+            color: #0f172a;
+        }
+
+        .note {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: 15px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Módulo de Análisis Estructural</h1>
+        <p>Herramienta interactiva para estudiantes de Ingeniería Civil</p>
+    </header>
+
+    <!-- Pestañas de Navegación -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'vigasTab')">Cálculo de Vigas</button>
+        <button class="tab-btn" onclick="switchTab(event, 'armadurasTab')">Análisis de Armaduras</button>
+    </div>
+
+    <!-- SECCIÓN 1: VIGAS -->
+    <div id="vigasTab" class="tab-content active">
+        <h2>Viga Simplemente Apoyada (Carga Uniformemente Distribuida)</h2>
+        <div class="form-grid">
+            <div class="input-group">
+                <label for="vigaL">Longitud de la Viga ($L$ en metros):</label>
+                <input type="number" id="vigaL" step="any" placeholder="Ej. 6.0">
+            </div>
+            <div class="input-group">
+                <label for="vigaW">Carga Distribuida ($w$ en kN/m):</label>
+                <input type="number" id="vigaW" step="any" placeholder="Ej. 15.0">
+            </div>
+        </div>
+        <button class="btn-calc" onclick="calcularViga()">Calcular Esfuerzos en Viga</button>
+
+        <div id="vigaResultados" class="results-card" style="display: none;">
+            <h3>Resultados del Análisis de Viga</h3>
+            <ul class="results-list">
+                <li>Reacciones en los apoyos ($R_A = R_B$): <span id="resReaccion" class="val"></span></li>
+                <li>Fuerza Cortante Máxima ($V_{max}$): <span id="resCortante" class="val"></span></li>
+                <li>Momento Flector Máximo ($M_{max}$): <span id="resMomento" class="val"></span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SECCIÓN 2: ARMADURAS -->
+    <div id="armadurasTab" class="tab-content">
+        <h2>Armadura Triangular Simple (Método de Nudos / Carga simétrica)</h2>
+        <p class="note">Modelo básico de cercha con carga vertical central ($P$) en la cumbrera y apoyos simples.</p>
+        <div class="form-grid">
+            <div class="input-group">
+                <label for="trussP">Carga Puntual Aplicada ($P$ en kN):</label>
+                <input type="number" id="trussP" step="any" placeholder="Ej. 20.0">
+            </div>
+            <div class="input-group">
+                <label for="trussAngle">Ángulo de inclinación de la cuerda ($\theta$ en grados):</label>
+                <input type="number" id="trussAngle" step="any" placeholder="Ej. 30">
+            </div>
+        </div>
+        <button class="btn-calc" onclick="calcularArmadura()">Calcular Fuerzas en Barras</button>
+
+        <div id="armaduraResultados" class="results-card" style="display: none;">
+            <h3>Resultados del Análisis de Armadura</h3>
+            <ul class="results-list">
+                <li>Reacción Vertical en Apoyos ($R_1 = R_2$): <span id="trussR" class="val"></span></li>
+                <li>Fuerza en Cuerda Inferior (Tensión): <span id="trussBottom" class="val"></span></li>
+                <li>Fuerza en Cuerda Superior (Compresión): <span id="trussTop" class="val"></span></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Control de Pestañas
+    function switchTab(evt, tabId) {
+        const contents = document.querySelectorAll('.tab-content');
+        contents.forEach(c => c.classList.remove('active'));
+
+        const buttons = document.querySelectorAll('.tab-btn');
+        buttons.forEach(b => b.classList.remove('active'));
+
+        document.getElementById(tabId).classList.add('active');
+        evt.currentTarget.classList.add('active');
+    }
+
+    // Lógica de Cálculo de Vigas
+    function calcularViga() {
+        const L = parseFloat(document.getElementById('vigaL').value);
+        const w = parseFloat(document.getElementById('vigaW').value);
+
+        if (isNaN(L) || isNaN(w) || L <= 0 || w < 0) {
+            alert("Por favor, introduce valores numéricos válidos y mayores a cero.");
+            return;
+        }
+
+        // Cálculos estáticos
+        const reaccion = (w * L) / 2;
+        const cortanteMax = reaccion;
+        const momentoMax = (w * Math.pow(L, 2)) / 8;
+
+        // Mostrar en interfaz
+        document.getElementById('resReaccion').innerText = reaccion.toFixed(2) + " kN";
+        document.getElementById('resCortante').innerText = cortanteMax.toFixed(2) + " kN";
+        document.getElementById('resMomento').innerText = momentoMax.toFixed(2) + " kN·m";
+        
+        document.getElementById('vigaResultados').style.display = 'block';
+    }
+
+    // Lógica de Cálculo de Armaduras (Truss básico simétrico)
+    function calcularArmadura() {
+        const P = parseFloat(document.getElementById('trussP').value);
+        const angleDeg = parseFloat(document.getElementById('trussAngle').value);
+
+        if (isNaN(P) || isNaN(angleDeg) || P <= 0 || angleDeg <= 0 || angleDeg >= 90) {
+            alert("Introduce una carga válida y un ángulo de inclinación entre 0° y 90°.");
+            return;
+        }
+
+        const angleRad = angleDeg * (Math.PI / 180);
+
+        // Reacciones simétricas en apoyos
+        const R = P / 2;
+
+        // Estimación por equilibrio estático en nudo cumbrera / apoyo
+        // Suma de fuerzas verticales en el nudo superior: 2 * F_top * sin(theta) = P  => F_top = P / (2 * sin(theta)) [Compresión]
+        const fTop = P / (2 * Math.sin(angleRad));
+        
+        // Suma de fuerzas horizontales: F_bottom = F_top * cos(theta) [Tensión]
+        const fBottom = fTop * Math.cos(angleRad);
+
+        // Mostrar en interfaz
+        document.getElementById('trussR').innerText = R.toFixed(2) + " kN";
+        document.getElementById('trussBottom').innerText = fBottom.toFixed(2) + " kN (Tensión)";
+        document.getElementById('trussTop').innerText = fTop.toFixed(2) + " kN (Compresión)";
+
+        document.getElementById('armaduraResultados').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
